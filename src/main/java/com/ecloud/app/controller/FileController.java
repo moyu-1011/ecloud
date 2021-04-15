@@ -27,7 +27,7 @@ public class FileController {
                 e.printStackTrace();
             }
         }
-        return "redirect:/oss";
+        return "redirect:/pages/widgets";
     }
 
 }

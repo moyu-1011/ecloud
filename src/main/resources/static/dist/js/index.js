@@ -198,3 +198,13 @@ $('.recover').click(function () {
         });
     }
 });
+function check() {
+    let imgs = document.getElementsByName("upload_img")
+    for (let i = 0; i < imgs.length; i++) {
+        if (imgs[i].value == '') {
+            alert("你还没有选择文件")
+            return false;
+        }
+    }
+    return true;
+};
