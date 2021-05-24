@@ -3,6 +3,9 @@ package com.ecloud.app.pojo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 实体类：从回收站复原时数据
+ */
 public class RecoverInfo {
     private String keyName;
     @JsonProperty("bucket")

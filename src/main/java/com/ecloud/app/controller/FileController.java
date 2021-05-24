@@ -1,7 +1,6 @@
 package com.ecloud.app.controller;
 
-import com.ecloud.app.utils.ECloudClientUtils;
-import com.ecloud.app.utils.ECloudUtils;
+import com.ecloud.app.service.ECloudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,9 +11,8 @@ import java.io.IOException;
 
 @Controller
 public class FileController {
-
     @Autowired
-    private ECloudUtils eCloud;
+    private ECloudService cloudService;
 
     @PostMapping("/file/upload")
     public String fileUpload(@RequestParam("upload_img") MultipartFile[] files) {
@@ -22,7 +20,7 @@ public class FileController {
             String name = file.getOriginalFilename();
             // 上传
             try {
-                eCloud.objectUpload("base1", name, file.getInputStream(), file.getSize());
+                cloudService.objectUpload("base1", name, file.getInputStream(), file.getSize());
             } catch (IOException e) {
                 e.printStackTrace();
             }

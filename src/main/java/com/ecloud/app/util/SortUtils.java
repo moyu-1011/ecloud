@@ -1,4 +1,4 @@
-package com.ecloud.app.utils;
+package com.ecloud.app.util;
 
 
 import com.ecloud.app.comparator.DateAscComparator;

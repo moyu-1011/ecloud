@@ -102,7 +102,6 @@ $('.save').click(function () {
 
 // upload
 $('.upload').click(function () {
-    console.log('upload');
 
 });
 
@@ -111,19 +110,20 @@ $('.delete').click(function () {
     if ($('li.selected').length == 0)
         alert('点击[选择]按钮可选择图片');
     else {
-        let infos = [];
-        let info;
+        let objects = [];
+        let object;
         $('.selected').each(function () {
-            info = {
-                'keyName':$(this).children('img').attr('value'),
-                'bucket':$(this).children('img').attr('data')
-            }
-            infos.push(info)
+            object = {
+                'destinationBucket': 'recycle-bin',
+                'sourceBucket': $(this).children('img').attr('data'),
+                'keyName': $(this).children('img').attr('value')
+            };
+            objects.push(object);
         });
 
         $.ajax({
             url: '/pages/action/delete',
-            data:JSON.stringify(infos),
+            data:JSON.stringify(objects),
             type: 'post',
             contentType: 'application/json;charset=UTF-8',
             success: function (data, status) {
@@ -142,19 +142,24 @@ $('.delete_completely').click(function () {
     if ($('li.selected').length == 0)
         alert('点击[选择]按钮可选择图片');
     else {
-        let keys = [];
+        let objects = [];
+        let object;
         $('.selected').each(function () {
-            keys.push($(this).children('img').attr('value'));
+            object = {
+                'sourceBucket': $(this).children('img').attr('data'),
+                'keyName': $(this).children('img').attr('value')
+            };
+            objects.push(object);
         });
 
-        console.log(keys);
+        console.log(objects);
         $.ajax({
             url: '/pages/delete_completely',
-            data: JSON.stringify(keys),
+            data: JSON.stringify(objects),
             type: 'post',
             contentType: 'application/json;charset=UTF-8',
             success: function (data, status) {
-                if (status == 'successs')
+                if (status == 'success')
                     alert(status);
                 else
                     alert(status)
@@ -170,24 +175,24 @@ $('.recover').click(function () {
     if ($('li.selected').length == 0)
         alert('点击[选择]按钮可选择图片');
     else {
-        let bucketNames = [];
-        let keyNames = [];
+        let objects = [];
+        let object;
 
         $('.selected').each(function () {
-            let keyName = $(this).children('img').attr('value');
-            let bucketName = $(this).children('img').attr('data');
-            keyNames.push(keyName);
-            bucketNames.push(bucketName);
+            console.log($(this).children('img').attr('data'));
+            object = {
+                'sourceBucket': $(this).children('img').attr('data'),
+                'destinationBucket': '',
+                'keyName': $(this).children('img').attr('value')
+            };
+            objects.push(object);
         });
 
         $.ajax({
             url: '/pages/action/recover',
-            data: {
-                'buckets': JSON.stringify(bucketNames),
-                'keys': JSON.stringify(keyNames)
-            },
+            data: JSON.stringify(objects),
             type: 'post',
-            // contentType: 'application/json;charset=UTF-8',
+            contentType: 'application/json;charset=UTF-8',
             success: function (data, status) {
                 if (status == 'successs')
                     alert(status);

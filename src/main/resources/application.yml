@@ -7,6 +7,10 @@ spring:
       max-file-size: 10MB
       #       单次请求最大100MB
       max-request-size: 100MB
+  # 开发,关闭缓存
+  thymeleaf:
+    cache: false
 
 server:
   port: 8001
+
