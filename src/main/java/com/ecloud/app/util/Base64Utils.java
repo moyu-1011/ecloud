@@ -11,7 +11,7 @@ public class Base64Utils {
         try {
             bao = new ByteArrayOutputStream();
             // 操作（分段读取）
-            byte[] flush = new byte[1024];// 缓冲容器
+            byte[] flush = new byte[1024 * 4];// 缓冲容器
             int len = -1;// 接收长度
             while ((len = is.read(flush)) != -1) {
                 bao.write(flush, 0, len);

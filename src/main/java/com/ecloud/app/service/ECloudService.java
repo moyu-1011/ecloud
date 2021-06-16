@@ -14,7 +14,7 @@ public interface ECloudService {
 
     void objectsDelete(List<ObjectCopy> listCopy);
 
-    void objectsDetect(String bucketName, String keyname);
+    void objectsDelete(String bucketName, String keyname);
 
     void objectsRecover(List<ObjectCopy> listCopy);
 

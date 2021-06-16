@@ -131,7 +131,7 @@ public class ECloudServiceImpl implements ECloudService {
     }
 
     @Override
-    public void objectsDetect(String bucketName, String keyname) {
+    public void objectsDelete(String bucketName, String keyname) {
         AmazonS3Client client = null;
         opts.setSignerOverride("S3SignerType");
         client = new AmazonS3Client(credentials, opts);
@@ -161,7 +161,6 @@ public class ECloudServiceImpl implements ECloudService {
             // 复原时,原bucket成为了目标bucket
             copy.setDestinationBucket(originalBucket);
         }
-        System.out.println("---" + listCopy.toString());
         objectsCopyAndDelete(listCopy);
     }
 
