@@ -1,4 +1,4 @@
-package com.ecloud.app.comparator;
+package com.ecloud.app.common;
 
 
 import com.ecloud.app.pojo.PictureInfo;

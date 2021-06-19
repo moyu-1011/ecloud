@@ -1,10 +1,10 @@
-package com.ecloud.app.util;
+package com.ecloud.app.common;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * 大小转换
+ * 大小格式转换
  **/
 public class SizeUtils {
 

@@ -1,15 +1,14 @@
-package com.ecloud.app.util;
+package com.ecloud.app.common;
 
 
-import com.ecloud.app.comparator.DateAscComparator;
-import com.ecloud.app.comparator.DateDescComparator;
-import com.ecloud.app.comparator.SizeAscComparator;
-import com.ecloud.app.comparator.SizeDescComparator;
 import com.ecloud.app.enums.Sort;
 import com.ecloud.app.pojo.PictureInfo;
 
 import java.util.List;
 
+/**
+ * 自定义集合的排序
+ */
 public class SortUtils {
     public static List<PictureInfo> sort(List<PictureInfo> o, Sort sort) {
         if (Sort.DateAsc.equals(sort)) {

@@ -206,6 +206,15 @@
                 我的照片
               </p>
             </a>
+            <!-- 导航下拉 -->
+            <ul class="nav nav-treeview" th:each="type:${picTypes}">
+              <li class="nav-item">
+                <a th:href="@{'/pages/widgets/' + ${type}}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p th:text="${type}"></p>
+                </a>
+              </li>
+            </ul>
           </li>
 
           <li class="nav-item">
@@ -275,9 +284,9 @@
     <section class="content">
       <div class="container-fluid">
       <div style="overflow: hidden">
-          <ul class="ul-content" th:unless="${#strings.isEmpty(list)}">
-            <li th:each="key : ${list}" class="block">
-              <img th:src="${key.url}" th:value="${key.keyName}" th:data="${key.bucketName}" class="content-img"/>
+          <ul class="ul-content" th:unless="${#strings.isEmpty(pictures)}">
+            <li th:each="picture : ${pictures}" class="block">
+              <img th:src="${picture.url}" th:value="${picture.keyName}" th:data="${picture.bucketName}" class="content-img"/>
             </li>
           </ul>
       </div>

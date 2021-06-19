@@ -1,10 +1,13 @@
-package com.ecloud.app.util;
+package com.ecloud.app.common;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 
+/**
+ * 转Base64编码
+ */
 public class Base64Utils {
     public static String toBase64(InputStream is) {
         ByteArrayOutputStream bao = null;

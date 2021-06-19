@@ -1,9 +1,12 @@
-package com.ecloud.app.util;
+package com.ecloud.app.common;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * 转字节数组
+ */
 public class FileUtils {
     public static byte[] convertBytes(InputStream is) {
         ByteArrayOutputStream bao = new ByteArrayOutputStream();

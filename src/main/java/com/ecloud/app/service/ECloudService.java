@@ -1,30 +1,25 @@
 package com.ecloud.app.service;
 
-import com.ecloud.app.pojo.ObjectCopy;
 import com.ecloud.app.pojo.PictureInfo;
+import com.ecloud.app.pojo.StorageObject;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 public interface ECloudService {
     List<PictureInfo> objectsGet(String bucketName);
 
-    void objectsCopy(List<ObjectCopy> listCopy);
+    void objectsCopy(List<StorageObject> objects);
 
-    void objectsDelete(List<ObjectCopy> listCopy);
+    void objectsDelete(List<StorageObject> objects);
 
-    void objectsDelete(String bucketName, String keyname);
+    void objectsRecover(List<StorageObject> objects);
 
-    void objectsRecover(List<ObjectCopy> listCopy);
-
-    void objectsUpload(String bucketName, String keyName, InputStream is, Long length);
-
-    void objectsCopyAndDelete(List<ObjectCopy> listCopy);
-
-    byte[] objectsSave(String[] buckets, String[] keys) throws IOException;
+    void objectsCopyAndDelete(List<StorageObject> objects);
 
     InputStream objectGetAsStream(String bucketName, String keyName);
 
     void objectUpload(String bucketName, String keyName, InputStream is, Long length);
+
+    byte[] objectsSave(List<StorageObject> objects);
 }

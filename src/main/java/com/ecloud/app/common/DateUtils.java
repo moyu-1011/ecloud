@@ -1,4 +1,4 @@
-package com.ecloud.app.util;
+package com.ecloud.app.common;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

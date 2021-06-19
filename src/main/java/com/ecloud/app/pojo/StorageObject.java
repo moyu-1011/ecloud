@@ -1,14 +1,14 @@
 package com.ecloud.app.pojo;
 
 /**
- * 实体类: 跨bucket复制时数据
+ *
  */
-public class ObjectCopy {
+public class StorageObject {
     private String destinationBucket;
     private String sourceBucket;
     private String keyName;
 
-    public ObjectCopy(String destinationBucket, String sourceBucket, String keyName) {
+    public StorageObject(String destinationBucket, String sourceBucket, String keyName) {
         this.destinationBucket = destinationBucket;
         this.sourceBucket = sourceBucket;
         this.keyName = keyName;

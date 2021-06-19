@@ -64,23 +64,21 @@ $('.save').click(function () {
     if ($('li.selected').length == 0)
         alert('点击[选择]按钮可选择图片');
     else {
-        let bucketNames = [];
-        let keyNames = [];
-
+        let objects = [];
+        let object;
         $('.selected').each(function () {
-            let keyName = $(this).children('img').attr('value');
-            let bucketName = $(this).children('img').attr('data');
-            keyNames.push(keyName);
-            bucketNames.push(bucketName);
+            object = {
+                'sourceBucket': $(this).children('img').attr('data'),
+                'keyName': $(this).children('img').attr('value')
+            };
+            objects.push(object);
         });
 
         $.ajax({
             url: '/pages/action/save',
             type: 'post',
-            data: {
-                'buckets': JSON.stringify(bucketNames),
-                'keys': JSON.stringify(keyNames)
-            },
+            data: JSON.stringify(objects),
+            contentType: 'application/json;charset=UTF-8',
             xhrFields: { responseType: "blob" },
             success: function(data){
                 let url = window.URL.createObjectURL(new Blob([data],{type: "application/zip" }));
@@ -95,10 +93,9 @@ $('.save').click(function () {
                 window.URL.revokeObjectURL(link.href);
             }
         });
-
-
     }
 });
+
 
 // upload
 $('.upload').click(function () {

@@ -5,13 +5,17 @@ import com.amazonaws.HttpMethod;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
+import com.ecloud.app.common.ClientUtils;
 import com.ecloud.app.enums.Sort;
-import com.ecloud.app.pojo.ObjectCopy;
+import com.ecloud.app.pojo.StorageObject;
 import com.ecloud.app.pojo.PictureInfo;
+import com.ecloud.app.pojo.StorageObject;
 import com.ecloud.app.service.ECloudService;
-import com.ecloud.app.util.DateUtils;
-import com.ecloud.app.util.SizeUtils;
-import com.ecloud.app.util.SortUtils;
+import com.ecloud.app.common.DateUtils;
+import com.ecloud.app.common.SizeUtils;
+import com.ecloud.app.common.SortUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
@@ -26,18 +30,33 @@ import java.util.zip.ZipOutputStream;
 
 @Service
 public class ECloudServiceImpl implements ECloudService {
+
     private static final String accessKey = "XLQXHDHOWE4Y3ASVA66G";
     private static final String accessSecret = "9nhzTLgQK9gkh41kHtJ4rsvX6YWrL22TyN0JXhCr";
     private static final String endpoint = "eos-chongqing-1.cmecloud.cn";
     private static final ClientConfiguration opts = new ClientConfiguration();
     private static final BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, accessSecret);
+//    static AmazonS3Client client = null;
+    private static final Logger logger = LoggerFactory.getLogger(ECloudServiceImpl.class);
+
+//    public static AmazonS3Client getInstance() {
+//        if (client == null) {
+//            synchronized (ECloudService.class) {
+//                if (client == null) {
+//                    opts.setSignerOverride("S3SignerType");
+//                    client = new AmazonS3Client(credentials, opts);
+//                    client.setEndpoint(endpoint);
+//                    logger.info("Initializing class: client ... ...");
+//                }
+//            }
+//        } else
+//            logger.info("client has been initialized...");
+//        return client;
+//    }
 
     @Override
     public List<PictureInfo> objectsGet(String bucketName) {
-        AmazonS3Client client = null;
-        opts.setSignerOverride("S3SignerType");
-        client = new AmazonS3Client(credentials, opts);
-        client.setEndpoint(endpoint);
+        AmazonS3Client client = ClientUtils.getInstance();
 
         final int maxKeys = 1000;// 最大返回数目
         GeneratePresignedUrlRequest request;
@@ -70,25 +89,22 @@ public class ECloudServiceImpl implements ECloudService {
 
     @Override
     @Transactional
-    public void objectsCopyAndDelete(List<ObjectCopy> listCopy) {
+    public void objectsCopyAndDelete(List<StorageObject> objects) {
         // 对象复制
-        objectsCopy(listCopy);
+        objectsCopy(objects);
 
         // 删除原对象
-        objectsDelete(listCopy);
+        objectsDelete(objects);
     }
 
     @Override
-    public void objectsCopy(List<ObjectCopy> listCopy) {
-        AmazonS3Client client = null;
-        opts.setSignerOverride("S3SignerType");
-        client = new AmazonS3Client(credentials, opts);
-        client.setEndpoint(endpoint);
+    public void objectsCopy(List<StorageObject> listCopy) {
+        AmazonS3Client client = ClientUtils.getInstance();
 
         CopyObjectRequest request;
-        Iterator<ObjectCopy> iterator = listCopy.iterator();
+        Iterator<StorageObject> iterator = listCopy.iterator();
         while (iterator.hasNext()) {
-            ObjectCopy next = iterator.next();
+            StorageObject next = iterator.next();
             String sourceBucket = next.getSourceBucket();
             String keyName = next.getKeyName();
             String destinationBucket = next.getDestinationBucket();
@@ -114,13 +130,10 @@ public class ECloudServiceImpl implements ECloudService {
 
 
     @Override
-    public void objectsDelete(List<ObjectCopy> listCopy) {
-        AmazonS3Client client = null;
-        opts.setSignerOverride("S3SignerType");
-        client = new AmazonS3Client(credentials, opts);
-        client.setEndpoint(endpoint);
+    public void objectsDelete(List<StorageObject> listCopy) {
+        AmazonS3Client client = ClientUtils.getInstance();
 
-        for (ObjectCopy copy : listCopy) {
+        for (StorageObject copy : listCopy) {
             DeleteObjectsRequest request = new DeleteObjectsRequest(copy.getSourceBucket());
             ArrayList<DeleteObjectsRequest.KeyVersion> listKeys = new ArrayList<>();
             DeleteObjectsRequest.KeyVersion keyVersion = new DeleteObjectsRequest.KeyVersion(copy.getKeyName());
@@ -131,30 +144,10 @@ public class ECloudServiceImpl implements ECloudService {
     }
 
     @Override
-    public void objectsDelete(String bucketName, String keyname) {
-        AmazonS3Client client = null;
-        opts.setSignerOverride("S3SignerType");
-        client = new AmazonS3Client(credentials, opts);
-        client.setEndpoint(endpoint);
+    public void objectsRecover(List<StorageObject> listCopy) {
+        AmazonS3Client client = ClientUtils.getInstance();
 
-        DeleteObjectsRequest request = new DeleteObjectsRequest(bucketName);
-        ArrayList<DeleteObjectsRequest.KeyVersion> listKeys = new ArrayList<>();
-        DeleteObjectsRequest.KeyVersion keyVersion1 = new DeleteObjectsRequest.KeyVersion("01.jpg");
-        DeleteObjectsRequest.KeyVersion keyVersion2 = new DeleteObjectsRequest.KeyVersion("04.jpg");
-        listKeys.add(keyVersion1);
-        listKeys.add(keyVersion2);
-        request.setKeys(listKeys);
-        client.deleteObjects(request);
-    }
-
-    @Override
-    public void objectsRecover(List<ObjectCopy> listCopy) {
-        AmazonS3Client client = null;
-        opts.setSignerOverride("S3SignerType");
-        client = new AmazonS3Client(credentials, opts);
-        client.setEndpoint(endpoint);
-
-        for (ObjectCopy copy : listCopy) {
+        for (StorageObject copy : listCopy) {
             ObjectMetadata metadata = client.getObjectMetadata(copy.getSourceBucket(), copy.getKeyName());
             Map<String, String> map = metadata.getUserMetadata();
             String originalBucket = map.get("originalBucket");
@@ -165,80 +158,56 @@ public class ECloudServiceImpl implements ECloudService {
     }
 
     @Override
-    public void objectsUpload(String bucketName, String keyName, InputStream is, Long length) {
-        AmazonS3Client client = null;
-        opts.setSignerOverride("S3SignerType");
-        client = new AmazonS3Client(credentials, opts);
-        client.setEndpoint(endpoint);
-
-        ObjectMetadata meta = new ObjectMetadata();
-
-        String suffix = keyName.substring(keyName.lastIndexOf(".") + 1);
-
-        // 图片格式
-        meta.setContentType("image/" + suffix);
-        // 对象大小
-        meta.setContentLength(length);
-
-        client.putObject(bucketName, keyName, is, meta);
-
-        client.shutdown();
-    }
-
-
-    @Override
-    public byte[] objectsSave(String[] buckets, String[] keys) throws IOException {
-        AmazonS3Client client = null;
-        opts.setSignerOverride("S3SignerType");
-        client = new AmazonS3Client(credentials, opts);
-        client.setEndpoint(endpoint);
+    public byte[] objectsSave(List<StorageObject> objects) {
+        AmazonS3Client client = ClientUtils.getInstance();
 
         ByteArrayOutputStream bao = new ByteArrayOutputStream();
         ZipOutputStream zos = new ZipOutputStream(bao);
-        for (int i = 0; i < buckets.length; i++) {
-            InputStream stream = objectGetAsStream(buckets[i], keys[i]);
-            zos.putNextEntry(new ZipEntry(keys[i]));
-            byte[] bytes = FileCopyUtils.copyToByteArray(stream);
-            zos.write(bytes);
-            zos.closeEntry();
+        for (int i = 0; i < objects.size(); i++) {
+            try {
+                StorageObject obj = objects.get(i);
+                InputStream inputStream = objectGetAsStream(obj.getSourceBucket(), obj.getKeyName());
+                zos.putNextEntry(new ZipEntry(obj.getKeyName()));
+                byte[] bytes = FileCopyUtils.copyToByteArray(inputStream);
+                zos.write(bytes);
+                zos.closeEntry();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        // important !!! 必须手动刷新,否则会造成数据不完整
-        zos.finish();
-        zos.close();
-        bao.close();
+
+        try {
+            // 必须手动刷新
+            zos.finish();
+            zos.close();
+            bao.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return bao.toByteArray();
     }
 
+
     @Override
     public InputStream objectGetAsStream(String bucketName, String keyName) {
-        AmazonS3Client client = null;
-        opts.setSignerOverride("S3SignerType");
-        client = new AmazonS3Client(credentials, opts);
-        client.setEndpoint(endpoint);
+        AmazonS3Client client = ClientUtils.getInstance();
 
         S3Object object = client.getObject(bucketName, keyName);
-        InputStream stream = object.getObjectContent();
-        return stream;
+
+        return object.getObjectContent();
     }
 
     @Override
     public void objectUpload(String bucketName, String keyName, InputStream is, Long length) {
-        AmazonS3Client client = null;
-        opts.setSignerOverride("S3SignerType");
-        client = new AmazonS3Client(credentials, opts);
-        client.setEndpoint(endpoint);
-
+        AmazonS3Client client = ClientUtils.getInstance();
         ObjectMetadata meta = new ObjectMetadata();
 
+        // 获取原本图片格式并上传
         String suffix = keyName.substring(keyName.lastIndexOf(".") + 1);
-
-        // 图片格式
         meta.setContentType("image/" + suffix);
+
         // 对象大小
         meta.setContentLength(length);
-
         client.putObject(bucketName, keyName, is, meta);
-
-        client.shutdown();
     }
 }

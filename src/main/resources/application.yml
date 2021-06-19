@@ -10,6 +10,21 @@ spring:
   # 开发,关闭缓存
   thymeleaf:
     cache: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/ecloud?serverTimezone=Asia/Shanghai&characterEncoding=utf8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 9824286Z
+
+    # 启动时总是加载初始化数据库
+    schema: classpath:db/schema.sql
+    data: classpath:db/data.sql
+    initialization-mode: always
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: mysql
 
 server:
   port: 8001
