@@ -6,7 +6,6 @@ import com.ecloud.app.pojo.PictureInfo;
 import com.ecloud.app.pojo.StorageObject;
 import com.ecloud.app.service.ECloudService;
 import com.ecloud.app.service.ObjectTypeService;
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -27,31 +25,54 @@ public class ECloudController {
     private ECloudService eCloudService;
     @Autowired
     private ObjectTypeService objectTypeService;
-
     private static final Logger logger = LoggerFactory.getLogger(ECloudController.class);
 
-    @GetMapping(value = {"/pages/widgets/{type}", "/pages/widgets"})
-    public String widgets(@PathVariable(value = "type", required = false) String type, Model model) {
-        List<PictureInfo> pictures = null;
+    /**
+     * 请求全部相册
+     *
+     * @param model
+     * @return
+     */
+    @GetMapping(value = {"/pages/widgets","/pages/widgets/all"})
+    public String widgets(Model model) {
         // 获取相册的所有类别
         List<String> picTypes = objectTypeService.findTypes();
         model.addAttribute("picTypes", picTypes);
-
-        if ("".equals(type) || null == type) {
-            // 获取全部相册
-            pictures = eCloudService.objectsGet("base1");
-            logger.info("请求全部相册");
-        } else {
-            // 获取分类相册
-            pictures = eCloudService.objectsGet(type);
-            logger.info("请求分类相册: {}", type);
-        }
+        List<PictureInfo> pictures = eCloudService.objectsGet("base1");
+        logger.info("请求全部相册");
         model.addAttribute("pictures", pictures);
+        model.addAttribute("activeType","all");
+        return "pages/widgets";
+    }
+
+    /**
+     * 分类相册请求
+     *
+     * @param type  请求相册类型
+     * @param model
+     * @return
+     */
+    @GetMapping("/pages/widgets/{type}")
+    public String widgetsType(@PathVariable("type") String type, Model model) {
+        // 获取相册的所有类别
+        List<String> picTypes = objectTypeService.findTypes();
+        model.addAttribute("picTypes", picTypes);
+        // 获取分类相册
+        List<PictureInfo> pictures = eCloudService.objectsGet(type);
+        logger.info("请求分类相册: {}", type);
+        model.addAttribute("pictures", pictures);
+        model.addAttribute("activeType", type);
         return "pages/widgets";
     }
 
 
-    // 根据图片大小,时间先后排序
+    /**
+     * 将图片按大小，时间排序
+     *
+     * @param sortType
+     * @param model
+     * @return
+     */
     @GetMapping("/pages/widgets/sortType={sortType}")
     public String widgetsSort(@PathVariable("sortType") String sortType, Model model) {
         List<PictureInfo> pictures = eCloudService.objectsGet("base1");
@@ -61,7 +82,12 @@ public class ECloudController {
         return "pages/widgets";
     }
 
-    // 回收站
+    /**
+     * 回收站
+     *
+     * @param model
+     * @return
+     */
     @GetMapping("/pages/recycle")
     public String recyclePage(Model model) {
         List<PictureInfo> recycleInfo = eCloudService.objectsGet("recycle-bin");
@@ -70,6 +96,13 @@ public class ECloudController {
         return "pages/recycle";
     }
 
+    /**
+     * 图片按大小，时间排序
+     *
+     * @param sortType
+     * @param model
+     * @return
+     */
     @GetMapping("/pages/recycle/sortType={sortType}")
     public String recycleSort(@PathVariable("sortType") String sortType, Model model) {
         List<PictureInfo> infos = eCloudService.objectsGet("recycle-bin");
@@ -78,16 +111,25 @@ public class ECloudController {
         return "pages/recycle";
     }
 
-    //　删除存储对象
+    /**
+     * 完全删除对象
+     *
+     * @param listCopy
+     * @return
+     */
     @PostMapping("/pages/delete_completely")
     @ResponseBody
     public String objectsDelete(@RequestBody List<StorageObject> listCopy) {
-        System.out.println(listCopy.toString());
         eCloudService.objectsDelete(listCopy);
         return "success";
     }
 
-    // 先复制对象到其他bucket中，再删除原bucket中的对象
+    /**
+     * 相册图片移动
+     *
+     * @param listCopy
+     * @return
+     */
     @PostMapping("/pages/action/delete")
     @ResponseBody
     public String objectsCopyAndDelete(@RequestBody List<StorageObject> listCopy) {
@@ -96,16 +138,25 @@ public class ECloudController {
         return "pages/widgets";
     }
 
-    // 从回收站中复原
+    /**
+     * 从回收站回收对象
+     *
+     * @param objects
+     * @return
+     */
     @PostMapping("/pages/action/recover")
     @ResponseBody
     public String objectsRecover(@RequestBody List<StorageObject> objects) {
         eCloudService.objectsRecover(objects);
-        System.out.println(objects.toString());
         return "success";
     }
 
-    //　以压缩文件方式保存对象到本地
+    /**
+     * 将图片对象批量压缩下载至本地
+     *
+     * @param object
+     * @return
+     */
     @PostMapping("/pages/action/save")
     @ResponseBody
     public ResponseEntity<byte[]> getZipAsStreamNew(@RequestBody List<StorageObject> object) {

@@ -4,7 +4,6 @@ import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.ecloud.app.service.ECloudService;
-import com.ecloud.app.service.impl.ECloudServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

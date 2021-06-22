@@ -79,13 +79,13 @@ $('.save').click(function () {
             type: 'post',
             data: JSON.stringify(objects),
             contentType: 'application/json;charset=UTF-8',
-            xhrFields: { responseType: "blob" },
-            success: function(data){
-                let url = window.URL.createObjectURL(new Blob([data],{type: "application/zip" }));
+            xhrFields: {responseType: "blob"},
+            success: function (data) {
+                let url = window.URL.createObjectURL(new Blob([data], {type: "application/zip"}));
                 const link = document.createElement('a');
                 link.style.display = 'none';
                 link.href = url;
-                let filename = 'img_' + new Date().getFullYear() + (new Date().getMonth() + 1 ) + new Date().getDate();
+                let filename = 'img_' + new Date().getFullYear() + (new Date().getMonth() + 1) + new Date().getDate();
                 link.setAttribute('download', filename + '.zip');
                 document.body.appendChild(link);
                 link.click();
@@ -120,7 +120,7 @@ $('.delete').click(function () {
 
         $.ajax({
             url: '/pages/action/delete',
-            data:JSON.stringify(objects),
+            data: JSON.stringify(objects),
             type: 'post',
             contentType: 'application/json;charset=UTF-8',
             success: function (data, status) {
@@ -200,6 +200,8 @@ $('.recover').click(function () {
         });
     }
 });
+
+// 检查空提交
 function check() {
     let imgs = document.getElementsByName("upload_img")
     for (let i = 0; i < imgs.length; i++) {
@@ -209,4 +211,12 @@ function check() {
         }
     }
     return true;
-};
+}
+
+
+// 获取需要被active的导航栏信息
+function activeEvent() {
+    let activeType = $('#nav-mypic').attr('data');
+    $('#'+activeType).addClass('active');
+}
+

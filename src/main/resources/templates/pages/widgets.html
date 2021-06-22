@@ -200,16 +200,16 @@
                with font-awesome or any other icon font library -->
 
           <li class="nav-item">
-            <a th:href="@{/pages/widgets}" class="nav-link active">
+            <a th:href="@{/pages/widgets}" class="nav-link active" id="pic-all">
               <i class="nav-icon fas fa-th"></i>
               <p>
                 我的照片
               </p>
             </a>
             <!-- 导航下拉 -->
-            <ul class="nav nav-treeview" th:each="type:${picTypes}">
+            <ul class="nav nav-treeview" th:each="type:${picTypes}" id="nav-mypic" th:data="${activeType}">
               <li class="nav-item">
-                <a th:href="@{'/pages/widgets/' + ${type}}" class="nav-link">
+                <a th:href="@{'/pages/widgets/' + ${type}}" class="nav-link" th:id="${type}">
                   <i class="far fa-circle nav-icon"></i>
                   <p th:text="${type}"></p>
                 </a>
@@ -354,5 +354,11 @@
 <script src="../../static/dist/js/adminlte.min.js" th:src="@{/dist/js/adminlte.min.js}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="../../static/dist/js/demo.js" th:src="@{/dist/js/demo.js}"></script>
+<script type="application/javascript">
+  window.onload=function () {
+    activeEvent();
+    $('#pic-all').click();
+  }
+</script>
 </body>
 </html>

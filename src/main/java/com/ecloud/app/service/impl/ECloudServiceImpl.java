@@ -1,21 +1,16 @@
 package com.ecloud.app.service.impl;
 
-import com.amazonaws.ClientConfiguration;
 import com.amazonaws.HttpMethod;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.ecloud.app.common.ClientUtils;
-import com.ecloud.app.enums.Sort;
-import com.ecloud.app.pojo.StorageObject;
-import com.ecloud.app.pojo.PictureInfo;
-import com.ecloud.app.pojo.StorageObject;
-import com.ecloud.app.service.ECloudService;
 import com.ecloud.app.common.DateUtils;
 import com.ecloud.app.common.SizeUtils;
 import com.ecloud.app.common.SortUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.ecloud.app.enums.Sort;
+import com.ecloud.app.pojo.PictureInfo;
+import com.ecloud.app.pojo.StorageObject;
+import com.ecloud.app.service.ECloudService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
@@ -30,29 +25,6 @@ import java.util.zip.ZipOutputStream;
 
 @Service
 public class ECloudServiceImpl implements ECloudService {
-
-    private static final String accessKey = "XLQXHDHOWE4Y3ASVA66G";
-    private static final String accessSecret = "9nhzTLgQK9gkh41kHtJ4rsvX6YWrL22TyN0JXhCr";
-    private static final String endpoint = "eos-chongqing-1.cmecloud.cn";
-    private static final ClientConfiguration opts = new ClientConfiguration();
-    private static final BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, accessSecret);
-//    static AmazonS3Client client = null;
-    private static final Logger logger = LoggerFactory.getLogger(ECloudServiceImpl.class);
-
-//    public static AmazonS3Client getInstance() {
-//        if (client == null) {
-//            synchronized (ECloudService.class) {
-//                if (client == null) {
-//                    opts.setSignerOverride("S3SignerType");
-//                    client = new AmazonS3Client(credentials, opts);
-//                    client.setEndpoint(endpoint);
-//                    logger.info("Initializing class: client ... ...");
-//                }
-//            }
-//        } else
-//            logger.info("client has been initialized...");
-//        return client;
-//    }
 
     @Override
     public List<PictureInfo> objectsGet(String bucketName) {
