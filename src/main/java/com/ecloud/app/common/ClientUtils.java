@@ -16,7 +16,6 @@ public class ClientUtils {
     private static final String endpoint = "eos-chongqing-1.cmecloud.cn";
     private static final ClientConfiguration opts = new ClientConfiguration();
     private static final BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, accessSecret);
-    private static final Logger logger = LoggerFactory.getLogger(ClientUtils.class);
     private static AmazonS3Client client = null;
 
     public static AmazonS3Client getInstance() {
@@ -26,11 +25,9 @@ public class ClientUtils {
                     opts.setSignerOverride("S3SignerType");
                     client = new AmazonS3Client(credentials, opts);
                     client.setEndpoint(endpoint);
-                    logger.info("initializing oss client ... ...");
                 }
             }
-        } else
-            logger.info("oss client has been initialized.");
+        }
         return client;
     }
 

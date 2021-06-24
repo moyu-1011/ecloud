@@ -13,7 +13,7 @@ import java.util.List;
 @Transactional
 public interface ObjectTypeRepository extends JpaRepository<ObjectType, Integer> {
 
-    @Query(value = "SELECT type FROM ObjectType ")
+    @Query(value = "SELECT type FROM ObjectType ORDER BY id")
     List<String> findTypes();
 
     @Modifying

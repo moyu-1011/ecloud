@@ -60,6 +60,19 @@ public class ECloudServiceImpl implements ECloudService {
     }
 
     @Override
+    public List<PictureInfo> objectsGetAll(List<String> types) {
+        List<PictureInfo> pictures = new ArrayList<>();
+        for (String type : types) {
+            if (type.equals("all")) continue;
+            List<PictureInfo> typePictures = objectsGet(type);
+            if (typePictures.size() != 0) {
+                pictures.addAll(typePictures);
+            }
+        }
+        return pictures;
+    }
+
+    @Override
     @Transactional
     public void objectsCopyAndDelete(List<StorageObject> objects) {
         // 对象复制

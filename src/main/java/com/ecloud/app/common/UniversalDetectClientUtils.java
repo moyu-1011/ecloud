@@ -21,11 +21,9 @@ public class UniversalDetectClientUtils {
             synchronized (UniversalDetectServiceImpl.class) {
                 if (ecloudClient == null) {
                     ecloudClient = new ECloudDefaultClient(credential, Region.POOL_SZ);
-                    logger.info("initializing universal detect client... ...");
                 }
             }
-        } else
-            logger.info("universal detect client has been initialized.");
+        }
         return ecloudClient;
     }
 

@@ -15,15 +15,6 @@ import java.io.InputStream;
 @Service
 public class FaceDetectServiceImpl implements FaceDetectService {
 
-    private static final Logger logger = LoggerFactory.getLogger(FaceDetectServiceImpl.class);
-
-
-    /**
-     * 检测到人脸返回true, 否则false
-     *
-     * @param is
-     * @return boolean
-     */
     @Override
     public boolean faceDetect(InputStream is) {
         AiFaceBody aiFaceBody = AiClientUtils.getInstance();
@@ -31,7 +22,6 @@ public class FaceDetectServiceImpl implements FaceDetectService {
 
         try {
             response = aiFaceBody.faceDetect(FileUtils.convertBytes(is), null);
-            logger.info("Detected images results: {}", response.getCommonResult());
         } catch (ClientException e) {
             e.printStackTrace();
         }

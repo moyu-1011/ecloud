@@ -38,7 +38,13 @@ public class ECloudController {
         // 获取相册的所有类别
         List<String> picTypes = objectTypeService.findTypes();
         model.addAttribute("picTypes", picTypes);
-        List<PictureInfo> pictures = eCloudService.objectsGet("base1");
+        List<PictureInfo> pictures = eCloudService.objectsGetAll(picTypes);
+
+        for (String type: picTypes) {
+            if ("all".equals(type)) continue;
+            eCloudService.objectsGet(type);
+        }
+
         logger.info("请求全部相册");
         model.addAttribute("pictures", pictures);
         model.addAttribute("activeType","all");
