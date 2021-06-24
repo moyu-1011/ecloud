@@ -33,21 +33,21 @@ public class ECloudController {
      * @param model
      * @return
      */
-    @GetMapping(value = {"/pages/widgets","/pages/widgets/all"})
+    @GetMapping(value = {"/pages/widgets", "/pages/widgets/all"})
     public String widgets(Model model) {
         // 获取相册的所有类别
         List<String> picTypes = objectTypeService.findTypes();
         model.addAttribute("picTypes", picTypes);
         List<PictureInfo> pictures = eCloudService.objectsGetAll(picTypes);
 
-        for (String type: picTypes) {
+        for (String type : picTypes) {
             if ("all".equals(type)) continue;
             eCloudService.objectsGet(type);
         }
 
         logger.info("请求全部相册");
         model.addAttribute("pictures", pictures);
-        model.addAttribute("activeType","all");
+        model.addAttribute("activeType", "all");
         return "pages/widgets";
     }
 
@@ -62,10 +62,10 @@ public class ECloudController {
     public String widgetsType(@PathVariable("type") String type, Model model) {
         // 获取相册的所有类别
         List<String> picTypes = objectTypeService.findTypes();
-        model.addAttribute("picTypes", picTypes);
         // 获取分类相册
         List<PictureInfo> pictures = eCloudService.objectsGet(type);
         logger.info("请求分类相册: {}", type);
+        model.addAttribute("picTypes", picTypes);
         model.addAttribute("pictures", pictures);
         model.addAttribute("activeType", type);
         return "pages/widgets";
@@ -73,20 +73,39 @@ public class ECloudController {
 
 
     /**
-     * 将图片按大小，时间排序
+     * 全部相册将图片按大小，时间排序
      *
      * @param sortType
      * @param model
      * @return
      */
-    @GetMapping("/pages/widgets/sortType={sortType}")
+    @GetMapping(value = {"/pages/widgets/sortType={sortType}", "/pages/widgets/all/sortType={sortType}"})
     public String widgetsSort(@PathVariable("sortType") String sortType, Model model) {
-        List<PictureInfo> pictures = eCloudService.objectsGet("base1");
+        List<String> picTypes = objectTypeService.findTypes();
+        List<PictureInfo> pictures = eCloudService.objectsGetAll(picTypes);
         SortUtils.sort(pictures, sortType);
         logger.info("pictures sort: {}", sortType);
         model.addAttribute("pictures", pictures);
+        model.addAttribute("picTypes", picTypes);
+        model.addAttribute("activeType", "all");
         return "pages/widgets";
     }
+
+    /**
+     * 分类相册排序
+     */
+    @GetMapping("/pages/widgets/{type}/sortType={sortType}")
+    public String widgetsTypeSort(@PathVariable("type") String type, @PathVariable("sortType") String sortType, Model model) {
+        List<String> picTypes = objectTypeService.findTypes();
+        List<PictureInfo> pictures = eCloudService.objectsGet(type);
+        SortUtils.sort(pictures, sortType);
+        logger.info("pictures sort: {}", sortType);
+        model.addAttribute("pictures", pictures);
+        model.addAttribute("picTypes", picTypes);
+        model.addAttribute("activeType", type);
+        return "pages/widgets";
+    }
+
 
     /**
      * 回收站
