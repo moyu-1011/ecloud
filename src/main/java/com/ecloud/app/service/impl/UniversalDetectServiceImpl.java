@@ -1,5 +1,6 @@
 package com.ecloud.app.service.impl;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.chinamobile.cmss.sdk.ECloudServerException;
 import com.chinamobile.cmss.sdk.IECloudClient;
 import com.chinamobile.cmss.sdk.request.EngineImageClassifyDetectPostRequest;
@@ -32,8 +33,7 @@ public class UniversalDetectServiceImpl implements UniversalDetectService {
                 List<EngineClassify> body = response.getBody();
                 objectType = body != null ? body.get(0).getClasses() : null;
             }
-        } catch (IOException | ECloudServerException | IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (IOException | ECloudServerException | IllegalAccessException | AmazonS3Exception e) {
         }
 
         return objectType;

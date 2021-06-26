@@ -1,20 +1,23 @@
 package com.ecloud.app;
 
-import com.ecloud.app.pojo.ObjectType;
-import com.ecloud.app.pojo.PictureInfo;
-import com.ecloud.app.repository.ObjectClassicRepository;
-import com.ecloud.app.service.*;
 import com.ecloud.app.common.Base64Utils;
+import com.ecloud.app.common.FileUtils;
+import com.ecloud.app.repository.ObjectClassicRepository;
+import com.ecloud.app.service.ECloudService;
+import com.ecloud.app.service.FaceDetectService;
+import com.ecloud.app.service.ObjectTypeService;
+import com.ecloud.app.service.UniversalDetectService;
+import com.ecloud.app.service.impl.FaceDetectServiceImpl;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.List;
 
 @SpringBootTest
 class AppApplicationTests {
@@ -30,6 +33,8 @@ class AppApplicationTests {
     private ObjectTypeService objectTypeService;
     @Autowired
     private ObjectClassicRepository objectClassicRepository;
+    @Autowired
+    FaceDetectServiceImpl faceDetectServiceImpl;
 
     /**
      * 测试数据库
@@ -69,10 +74,19 @@ class AppApplicationTests {
      */
     @Test
     void universalDetect() {
-        InputStream stream = eCloudService.objectGetAsStream("base1", "sm.jpg");
+        InputStream stream = eCloudService.objectGetAsStream("human", "human.jpg");
         String base64 = Base64Utils.toBase64(stream);
-        String objectType = universalDetectService.universalDetect(base64);
-        logger.info("ObjectType: {}", objectType);
+        String objectName = universalDetectService.universalDetect(base64);
+        Assertions.assertEquals("人", objectName.split(",")[0]);
+
+        try {
+            FileInputStream inputStream = new FileInputStream("D:/imgs/dog.gif");
+            String base64A = Base64Utils.toBase64(inputStream);
+            String objectNameA = universalDetectService.universalDetect(base64A);
+            logger.info("{}",objectNameA);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -81,20 +95,18 @@ class AppApplicationTests {
      */
     @Test
     void faceTest() {
-        InputStream stream = eCloudService.objectGetAsStream("base1", "Lighthouse.jpg");
+        InputStream stream = eCloudService.objectGetAsStream("human", "human.jpg");
         boolean isFace = faceDetectService.faceDetect(stream);
-        logger.info("The images contains face: {}.", isFace);
+        Assertions.assertTrue(isFace);
     }
 
-    /**
-     * 对象存储测试
-     */
+
     @Test
     void contextLoads() {
-        List<String> types = objectTypeService.findTypes();
-        logger.info("types: {}", types);
-        List<PictureInfo> pictures = eCloudService.objectsGetAll(types);
-        logger.info("pictures: {}", pictures);
+        boolean standardSuffix = FileUtils.standardSuffix("x.jpg");
+        Assertions.assertTrue(standardSuffix);
+        boolean standardSuffix1 = FileUtils.standardSuffix("x.webp");
+        Assertions.assertFalse(standardSuffix1);
     }
 
 

@@ -1,7 +1,7 @@
 package com.ecloud.app.pojo;
 
 /**
- *
+ *  对象操作时数据
  */
 public class StorageObject {
     private String destinationBucket;

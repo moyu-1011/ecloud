@@ -7,7 +7,7 @@ import com.ecloud.app.common.ClientUtils;
 import com.ecloud.app.common.DateUtils;
 import com.ecloud.app.common.SizeUtils;
 import com.ecloud.app.common.SortUtils;
-import com.ecloud.app.enums.Sort;
+import com.ecloud.app.enums.SortEnum;
 import com.ecloud.app.pojo.PictureInfo;
 import com.ecloud.app.pojo.StorageObject;
 import com.ecloud.app.service.ECloudService;
@@ -55,7 +55,7 @@ public class ECloudServiceImpl implements ECloudService {
             infoList.add(info);
         }
         // 日期降序
-        SortUtils.sort(infoList, Sort.DateDesc);
+        SortUtils.sort(infoList, SortEnum.DateDesc);
         return infoList;
     }
 
@@ -75,10 +75,8 @@ public class ECloudServiceImpl implements ECloudService {
     @Override
     @Transactional
     public void objectsCopyAndDelete(List<StorageObject> objects) {
-        // 对象复制
         objectsCopy(objects);
 
-        // 删除原对象
         objectsDelete(objects);
     }
 
@@ -144,8 +142,6 @@ public class ECloudServiceImpl implements ECloudService {
 
     @Override
     public byte[] objectsSave(List<StorageObject> objects) {
-        AmazonS3Client client = ClientUtils.getInstance();
-
         ByteArrayOutputStream bao = new ByteArrayOutputStream();
         ZipOutputStream zos = new ZipOutputStream(bao);
         for (int i = 0; i < objects.size(); i++) {

@@ -1,5 +1,7 @@
 package com.ecloud.app.controller;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.ecloud.app.common.FileUtils;
 import com.ecloud.app.service.ECloudService;
 import com.ecloud.app.service.FaceDetectService;
 import com.ecloud.app.service.ObjectClassicService;
@@ -33,24 +35,36 @@ public class FileController {
     public String fileUpload(@RequestParam("upload_img") MultipartFile[] files) {
         for (MultipartFile file : files) {
             if (file == null) {
-                logger.error("ERROR!!!FILE CAN'T BE NULL");
+                logger.error("ERROR!!!FILE CAN'T BE NULL!");
                 continue;
             }
 
             try {
+                // 原文件名
                 String name = file.getOriginalFilename();
-                InputStream stream = file.getInputStream();
+                // 文件大小
                 long size = file.getSize();
-                InputStream inputStream = file.getInputStream();
-                boolean containsFace = faceDetectService.faceDetect(inputStream);
+                InputStream stream;
+
+                // 检查图片格式  ”BMP“, "JPG", "WBMP", "JPEG", "PNG", "GIF“外的格式转为JPG格式
+                if (FileUtils.standardSuffix(name)) {
+                    stream = file.getInputStream();
+                } else {
+                    stream = FileUtils.convertImageFile(file.getInputStream());
+                }
+
+                boolean containsFace = faceDetectService.faceDetect(file.getInputStream());
                 if (containsFace) {
-                    //识别到人脸
                     cloudService.objectUpload("human", name, file.getInputStream(), size);
                     logger.info("对象'{}', 检测到人脸，归类为human", name);
                 } else {
+                    // 转为base64编码
                     String base64 = Base64Utils.toBase64(stream);
                     // 识别对象名称
                     String detectName = universalDetectService.universalDetect(base64);
+                    if (detectName == null) {
+                        throw new AmazonS3Exception("图片格式仅限JPG/PNG/BMP/JEPG/WBMP!");
+                    }
                     detectName = detectName.split(",")[0];
                     // 查询该物品所属类别
                     String classic = objectClassicService.findClassicByName(detectName);

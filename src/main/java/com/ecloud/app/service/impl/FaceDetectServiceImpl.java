@@ -30,4 +30,5 @@ public class FaceDetectServiceImpl implements FaceDetectService {
         }
         return true;
     }
+
 }

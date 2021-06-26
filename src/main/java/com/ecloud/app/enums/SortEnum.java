@@ -1,5 +1,5 @@
 package com.ecloud.app.enums;
 
-public enum Sort {
+public enum SortEnum {
     DateAsc,DateDesc,SizeAsc,SizeDesc
 }
