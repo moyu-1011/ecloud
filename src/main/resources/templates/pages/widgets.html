@@ -265,10 +265,10 @@
             排序
           </a>
           <div class="dropdown-menu">
-            <a class="dropdown-item" th:href="@{/pages/widgets/sortType=DateDesc}">日期降序</a>
-            <a class="dropdown-item" th:href="@{/pages/widgets/sortType=DateAsc}">日期升序</a>
-            <a class="dropdown-item" th:href="@{/pages/widgets/sortType=SizeDesc}">大小降序</a>
-            <a class="dropdown-item" th:href="@{/pages/widgets/sortType=SizeAsc}">大小升序</a>
+            <a class="dropdown-item" th:href="@{'/pages/widgets/' + ${activeType} + '/sortType=DateDesc'}">日期降序</a>
+            <a class="dropdown-item" th:href="@{'/pages/widgets/' + ${activeType} + '/sortType=DateAsc'}">日期升序</a>
+            <a class="dropdown-item" th:href="@{'/pages/widgets/' + ${activeType} + '/sortType=SizeDesc'}">大小降序</a>
+            <a class="dropdown-item" th:href="@{'/pages/widgets/' + ${activeType} + '/sortType=SizeAsc'}">大小升序</a>
           </div>
         </li>
 

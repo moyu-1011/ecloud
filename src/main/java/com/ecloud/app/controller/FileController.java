@@ -33,6 +33,7 @@ public class FileController {
     // 上传至相册
     @PostMapping("/file/upload")
     public String fileUpload(@RequestParam("upload_img") MultipartFile[] files) {
+        String classic = null;
         for (MultipartFile file : files) {
             if (file == null) {
                 logger.error("ERROR!!!FILE CAN'T BE NULL!");
@@ -67,7 +68,7 @@ public class FileController {
                     }
                     detectName = detectName.split(",")[0];
                     // 查询该物品所属类别
-                    String classic = objectClassicService.findClassicByName(detectName);
+                    classic = objectClassicService.findClassicByName(detectName);
                     // 没有查询到该对象所属何类，归在其他类
                     classic = classic == null ? "others" : classic;
                     logger.info(" 对象'{}', 通用识别物品名称: {}, 归类为:  {}", name, detectName, classic);
@@ -77,6 +78,6 @@ public class FileController {
                 logger.error("{}", e);
             }
         }
-        return "redirect:/pages/widgets";
+        return "redirect:/pages/widgets/" + classic;
     }
 }
