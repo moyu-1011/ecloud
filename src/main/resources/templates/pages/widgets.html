@@ -332,7 +332,7 @@
         <!-- 模态框主体 -->
         <div class="modal-body">
           <form th:action="@{/file/upload}" method="post" enctype="multipart/form-data" th:onsubmit="return check()">
-            <input type="file" name="upload_img" id="upload_img" multiple="multiple" accept="image/png,image/gif,image/jpg,image/jpeg"/>
+            <input type="file" name="upload_img" id="upload_img" multiple="multiple" accept="image/png,image/gif,image/jpg,image/jpeg,image/webp"/>
             <input type="submit" value="上传"/>
           </form>
         </div>

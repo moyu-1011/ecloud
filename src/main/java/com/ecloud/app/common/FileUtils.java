@@ -30,6 +30,12 @@ public class FileUtils {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            try {
+                bao.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return bao.toByteArray();
     }
