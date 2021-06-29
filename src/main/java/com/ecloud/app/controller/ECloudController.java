@@ -37,15 +37,10 @@ public class ECloudController {
     public String widgets(Model model) {
         // 获取相册的所有类别
         List<String> picTypes = objectTypeService.findTypes();
-        model.addAttribute("picTypes", picTypes);
         List<PictureInfo> pictures = eCloudService.objectsGetAll(picTypes);
 
-        for (String type : picTypes) {
-            if ("all".equals(type)) continue;
-            eCloudService.objectsGet(type);
-        }
-
         logger.info("请求全部相册");
+        model.addAttribute("picTypes", picTypes);
         model.addAttribute("pictures", pictures);
         model.addAttribute("activeType", "all");
         return "pages/widgets";

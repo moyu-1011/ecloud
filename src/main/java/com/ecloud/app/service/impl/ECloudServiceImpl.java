@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -62,12 +63,22 @@ public class ECloudServiceImpl implements ECloudService {
     @Override
     public List<PictureInfo> objectsGetAll(List<String> types) {
         List<PictureInfo> pictures = new ArrayList<>();
+        final CountDownLatch latch = new CountDownLatch(types.size() - 1);
+
         for (String type : types) {
             if (type.equals("all")) continue;
-            List<PictureInfo> typePictures = objectsGet(type);
-            if (typePictures.size() != 0) {
-                pictures.addAll(typePictures);
-            }
+            new Thread(() -> {
+                List<PictureInfo> typePictures = objectsGet(type);
+                if (typePictures.size() != 0) {
+                    pictures.addAll(typePictures);
+                }
+                latch.countDown();
+            }).start();
+        }
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         return pictures;
     }
