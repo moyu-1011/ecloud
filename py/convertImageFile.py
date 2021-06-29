@@ -26,7 +26,7 @@ def transImg(img_path):
     if IsValidImage(img_path):
         try:
             str = img_path.rsplit(".", 1)
-            output_img_path = str[0] + ".jpg"
+            output_img_path = str[0] + "x" + ".jpg"
             im = Image.open(img_path)
             im.save(output_img_path)
             return True

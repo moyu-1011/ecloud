@@ -1,5 +1,7 @@
 package com.ecloud.app.common;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -30,7 +32,7 @@ public class FileUtils {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 bao.close();
             } catch (IOException e) {
@@ -72,14 +74,37 @@ public class FileUtils {
     }
 
     /**
-     * 检查图片格式
-     * @param fileName
+     * 存储到本地 路径: 项目根目录下/imgs/
+     * @param file
      * @return
      */
-    public static boolean standardSuffix(String fileName) {
-        List<String> listSuffix = Arrays.asList("BMP", "JPG", "WBMP", "JPEG", "PNG", "GIF");
-        String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
-        return listSuffix.contains(suffix.toUpperCase());
+    public static boolean saveAsLocal(MultipartFile file) {
+        String savePath = System.getProperty("user.dir") + "/imgs";
+        String filePath = savePath + "/" + file.getOriginalFilename();
+        File saveDir = new File(savePath);
+
+        if (!saveDir.exists()) {
+            saveDir.mkdir();
+        }
+
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(filePath);
+            outputStream.write(convertBytes(file.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return true;
     }
 
 }

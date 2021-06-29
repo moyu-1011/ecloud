@@ -36,6 +36,6 @@ public class UniversalDetectServiceImpl implements UniversalDetectService {
         } catch (IOException | ECloudServerException | IllegalAccessException | AmazonS3Exception e) {
         }
 
-        return objectType;
+        return objectType.split(",")[0];
     }
 }
