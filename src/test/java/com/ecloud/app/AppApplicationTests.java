@@ -1,14 +1,14 @@
 package com.ecloud.app;
 
-import com.ecloud.app.common.Base64Utils;
-import com.ecloud.app.common.FileUtils;
-import com.ecloud.app.common.JPython;
+import com.ecloud.app.common.*;
 import com.ecloud.app.repository.ObjectClassicRepository;
 import com.ecloud.app.service.ECloudService;
 import com.ecloud.app.service.FaceDetectService;
 import com.ecloud.app.service.ObjectTypeService;
 import com.ecloud.app.service.UniversalDetectService;
 import com.ecloud.app.service.impl.FaceDetectServiceImpl;
+import org.jim2mov.core.MovieInfoProvider;
+import org.jim2mov.core.MovieSaveException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @SpringBootTest
 class AppApplicationTests {
@@ -101,8 +104,25 @@ class AppApplicationTests {
 
 
     @Test
-    void contextLoads() {
+    void contextLoads() throws MovieSaveException {
+        System.setProperty("java.awt.headless", "false");
+
+        File[] listFiles = new File("D:\\java_repo\\ecloud\\imgs").listFiles();
+        String[] files = new String[listFiles.length];
+
+
+        for (int i = 0; i < listFiles.length; i++) {
+            files[i] = listFiles[i].getAbsolutePath();
+            logger.info("saved img: {}", files[i]);
+        }
+
+        new VideoComposite(files, MovieInfoProvider.TYPE_QUICKTIME_JPEG, "video/output.mov");
     }
 
+
+    @Test
+    void convertVideoTest() {
+
+    }
 
 }

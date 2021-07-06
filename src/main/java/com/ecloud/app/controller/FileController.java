@@ -114,7 +114,7 @@ public class FileController {
             e.printStackTrace();
         }
 
-        logger.info("upload file numbers: {}, cost: {}ms", files.length, System.currentTimeMillis() - d1);
+        logger.info("upload file counts: {}, cost: {}ms", files.length, System.currentTimeMillis() - d1);
 
         return "redirect:/pages/widgets";
     }

@@ -75,6 +75,7 @@ public class FileUtils {
 
     /**
      * 存储到本地 路径: 项目根目录下/imgs/
+     *
      * @param file
      * @return
      */
@@ -102,6 +103,18 @@ public class FileUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        return true;
+    }
+
+    public static boolean deleteLocal(String deletePath) {
+        File file = new File(deletePath);
+        if (file.exists()) {
+            boolean delete = file.delete();
+
+            if (!delete)
+                return false;
         }
 
         return true;

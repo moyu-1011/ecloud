@@ -1,6 +1,7 @@
 package com.ecloud.app.controller;
 
 import com.ecloud.app.common.DateUtils;
+import com.ecloud.app.common.FileUtils;
 import com.ecloud.app.common.SortUtils;
 import com.ecloud.app.pojo.PictureInfo;
 import com.ecloud.app.pojo.StorageObject;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -153,8 +156,17 @@ public class ECloudController {
     @PostMapping("/pages/action/delete")
     @ResponseBody
     public String objectsCopyAndDelete(@RequestBody List<StorageObject> listCopy) {
-        System.out.println(listCopy.toString());
         eCloudService.objectsCopyAndDelete(listCopy);
+
+        Iterator<StorageObject> it = listCopy.iterator();
+        while (it.hasNext()) {
+            StorageObject next = it.next();
+            String deletePath = next.getKeyName();
+            logger.info("deletePath: {}", deletePath);
+            boolean delete = FileUtils.deleteLocal(deletePath);
+            logger.info("delete: {}", delete);
+        }
+
         return "pages/widgets";
     }
 

@@ -38,6 +38,15 @@
             <version>2.10.2</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/javax.media/jmf -->
+        <dependency>
+            <groupId>javax.media</groupId>
+            <artifactId>jmf</artifactId>
+            <version>2.1.1e</version>
+        </dependency>
+
+
+
         <!-- 人脸识别 -->
         <dependency>
             <groupId>com.chinamobile.cmss</groupId>
@@ -54,6 +63,15 @@
             <version>1.0.0</version>
             <scope>system</scope>
             <systemPath>${pom.basedir}/lib/ecloud-engine-sdk-1.0.0-jar-with-dependencies.jar</systemPath>
+        </dependency>
+
+        <!-- j2m -->
+        <dependency>
+            <groupId>org.jim2mov</groupId>
+            <artifactId>jim2mov</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/jim2mov.jar</systemPath>
         </dependency>
 
 
@@ -97,6 +115,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

@@ -134,6 +134,34 @@ $('.delete').click(function () {
     }
 });
 
+// create video
+$('.create_video').click(function () {
+        $.ajax({
+            url: '/action/create_video',
+            type: 'get',
+            success: function (data, status) {
+                location.reload();
+                alert(status);
+            }
+        });
+});
+
+// delete video
+$('.delete_video').click(function () {
+    $.ajax({
+        url: '/action/delete_video',
+        type: 'get',
+        success: function (data, status) {
+            location.reload();
+            alert(data);
+        }
+    });
+});
+
+
+
+
+
 //delete completely
 $('.delete_completely').click(function () {
     if ($('li.selected').length == 0)
