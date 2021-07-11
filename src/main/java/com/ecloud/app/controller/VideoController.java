@@ -1,6 +1,7 @@
 package com.ecloud.app.controller;
 
 import com.ecloud.app.common.ConvertVideo;
+import com.ecloud.app.common.MergeVideoMp3;
 import com.ecloud.app.common.VideoComposite;
 import org.jim2mov.core.MovieInfoProvider;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.Objects;
 
 @Controller
 public class VideoController {
@@ -20,7 +22,7 @@ public class VideoController {
 
     @GetMapping("toVideo")
     public String toVideo() {
-        return "/pages/video";
+        return "pages/video";
     }
 
     @GetMapping("/video")
@@ -29,13 +31,13 @@ public class VideoController {
             FileInputStream fis = null;
             OutputStream os = null;
 
-            File output = new File(System.getProperty("user.dir") + "/video/output.mp4");
+            File output = new File(System.getProperty("user.dir") + "/video/result.mp4");
             if (!output.exists()) {
-                logger.info("output not exist!");
+                logger.info("the video not exist!");
                 return null;
             }
 
-            fis = new FileInputStream(System.getProperty("user.dir") + "/video/output.mp4");
+            fis = new FileInputStream(System.getProperty("user.dir") + "/video/result.mp4");
             int size = fis.available(); // 得到文件大小
             byte data[] = new byte[size];
             fis.read(data); // 读数据
@@ -47,7 +49,6 @@ public class VideoController {
             os.flush();
             os.close();
             os = null;
-
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -65,7 +66,12 @@ public class VideoController {
         String root = System.getProperty("user.dir");
 
         // 遍历图片
-        File[] listFiles = new File(root + "/imgs").listFiles();
+        File file = new File(root + "/imgs");
+        if (!file.exists() || file.listFiles().length == 0) {
+            return "失败: 还没有人物图片库,请先上传图片";
+        }
+
+        File[] listFiles = file.listFiles();
         String[] files = new String[listFiles.length];
 
         for (int i = 0; i < listFiles.length; i++) {
@@ -81,11 +87,9 @@ public class VideoController {
                 logger.info("删除视频: {}", delete);
             }
 
-            // 合成视频
             new VideoComposite(files, MovieInfoProvider.TYPE_QUICKTIME_JPEG, "video/output.mov");
-
-            // 视频转换mp4格式
             ConvertVideo.convert(root + "/video/output.mov", root + "/video/", root + "/");
+            MergeVideoMp3.convert(root + "/video/output.mp4", root + "/music/music.mp3",root + "/video/result.mp4",root + "/ffmpeg.exe");
         } catch (Exception e) {
             logger.error("{}", e);
             return "failure";
@@ -97,16 +101,17 @@ public class VideoController {
     @GetMapping("/action/delete_video")
     @ResponseBody
     public String deleteVideo() {
-        File output = new File(System.getProperty("user.dir") + "/video/output.mp4");
+        File output = new File(System.getProperty("user.dir") + "/video/result.mp4");
+        File origin = new File(System.getProperty("user.dir") + "/video/output.mov");
 
-        if (!output.exists()) {
-            return "false";
+        if (output.exists()) {
+            boolean b = output.delete();
+            logger.info("delete '{}': {}", output, b);
         }
 
-        boolean delete = output.delete();
-
-        if (!delete) {
-            return "false";
+        if (origin.exists()) {
+            boolean b = origin.delete();
+            logger.info("delete '{}': {}", origin, b);
         }
 
         return "success";
